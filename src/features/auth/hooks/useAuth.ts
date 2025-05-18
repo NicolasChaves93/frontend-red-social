@@ -29,21 +29,22 @@ export function useAuth() {
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (username: string, email: string, password: string, fullName: string) => {
     setLoading(true);
     setError(null);
     
     try {
       const response = await api.post("/auth/register", { 
-        name, 
+        username, 
         email, 
-        password 
+        password,
+        fullName 
       });
       return response.data;
     } catch (err: any) {
       const message = err.response?.data?.message || "Error al registrar usuario";
       setError(message);
-      throw new Error(message);
+      throw err; // Pasar el error completo para mejor manejo
     } finally {
       setLoading(false);
     }

@@ -6,7 +6,8 @@ import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../../../shared/hooks/useToast";
 
 export default function RegisterPage() {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState(""); // Cambiado de "name" a "username"
+  const [fullName, setFullName] = useState(""); // Agregar campo fullName
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,8 +20,12 @@ export default function RegisterPage() {
   const validateForm = () => {
     const errors: {[key: string]: string} = {};
     
-    if (!name.trim()) {
-      errors.name = "El nombre es obligatorio";
+    if (!username.trim()) {
+      errors.username = "El nombre de usuario es obligatorio";
+    }
+    
+    if (!fullName.trim()) {
+      errors.fullName = "El nombre completo es obligatorio";
     }
     
     if (!email.trim()) {
@@ -47,11 +52,19 @@ export default function RegisterPage() {
     if (!validateForm()) return;
     
     try {
-      await register(name, email, password);
+      // Incluir fullName en la llamada a register
+      await register(username, email, password, fullName);
       showToast("Cuenta creada exitosamente. Ahora puedes iniciar sesión.", "success");
       navigate("/login");
     } catch (error: any) {
-      showToast(error.message || "Error al registrar usuario", "error");
+      // Manejo específico de errores de validación del servidor
+      if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+        const serverErrors = error.response.data.errors;
+        const errorMsg = serverErrors.join(", ");
+        showToast(`Error: ${errorMsg}`, "error");
+      } else {
+        showToast(error.message || "Error al registrar usuario", "error");
+      }
     }
   };
 
@@ -65,12 +78,23 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit}>
           <Input
             type="text"
-            label="Nombre"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            error={formErrors.name}
+            label="Nombre de usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            error={formErrors.username}
             required
-            placeholder="Tu nombre"
+            placeholder="Tu nombre de usuario"
+          />
+          
+          {/* Agregar campo para el nombre completo */}
+          <Input
+            type="text"
+            label="Nombre completo"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            error={formErrors.fullName}
+            required
+            placeholder="Tu nombre completo"
           />
           
           <Input
