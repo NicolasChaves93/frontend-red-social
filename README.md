@@ -1,54 +1,93 @@
-# React + TypeScript + Vite
+# Red Social - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación frontend de una red social moderna desarrollada con React, TypeScript y Vite. Esta aplicación permite a los usuarios registrarse, iniciar sesión, publicar contenido, dar likes y gestionar sus perfiles.
 
-Currently, two official plugins are available:
+## Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Autenticación de usuarios**: Registro e inicio de sesión con JWT
+- **Gestión de perfil**: Ver y editar información de perfil
+- **Publicaciones**: Crear, ver y dar likes a publicaciones
+- **Diseño responsive**: Interfaz adaptable a diferentes dispositivos
+- **Componentes reutilizables**: Botones, inputs, tarjetas, etc.
+- **Gestión de estado**: Implementación con Zustand para un estado global eficiente
 
-## Expanding the ESLint configuration
+## Tecnologías
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- Zustand (Manejo de estado)
+- React Router v6
+- Axios (Peticiones HTTP)
+- date-fns (Formateo de fechas)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Instalación
+
+### Requisitos previos
+
+- Node.js (versión 18 o superior)
+- npm o yarn
+
+### Pasos para instalar
+
+1. Clona el repositorio:
+
+```bash
+git clone https://github.com/NicolasChaves93/frontend-red-social.git
+cd frontend-red-social
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Instala las dependencias:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm install
+# o
+yarn install
 ```
+
+3. Inicia el servidor de desarrollo:
+
+```bash
+npm run dev
+# o
+yarn dev
+```
+
+4. Abre tu navegador en `http://localhost:5173`
+
+## Estructura del proyecto
+
+```
+src/
+├── app/                    # Configuración global
+│   ├── router.tsx          # Configuración de rutas
+│   └── layout/             # Layouts de la aplicación
+│
+├── features/               # Organización por dominio funcional
+│   ├── auth/               # Autenticación
+│   ├── posts/              # Publicaciones
+│   └── profile/            # Perfiles de usuario
+│
+├── shared/                 # Utilidades reutilizables
+│   ├── components/         # Componentes compartidos
+│   ├── hooks/              # Hooks personalizados
+│   ├── types/              # Tipos compartidos
+│   └── utils/              # Utilidades
+│
+└── styles/                 # Estilos globales
+```
+
+## API Backend
+
+La aplicación se conecta a un API REST con las siguientes características:
+
+- URL Base: `http://localhost:3000/api`
+- Endpoints principales:
+  - Autenticación: `/auth/login`, `/auth/register`
+  - Perfil: `/users/profile`, `/users/:id`
+  - Publicaciones: `/posts`, `/posts/:id/like`
+
+## Licencia
+
+[MIT](LICENSE)
