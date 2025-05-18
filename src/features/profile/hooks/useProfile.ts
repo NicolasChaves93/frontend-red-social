@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import api from "../../../shared/utils/api";
 import type { User } from "../../../shared/types";
 
@@ -11,7 +11,8 @@ export function useProfile() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getUserProfile = async (userId?: string) => {
+  // Usar useCallback para evitar recreaciones innecesarias del método
+  const getUserProfile = useCallback(async (userId?: string) => {
     setLoading(true);
     setError(null);
     
@@ -33,9 +34,10 @@ export function useProfile() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const updateUserProfile = async (data: Partial<User>) => {
+  // Usar useCallback para evitar recreaciones innecesarias del método
+  const updateUserProfile = useCallback(async (data: Partial<User>) => {
     setLoading(true);
     setError(null);
     
@@ -55,7 +57,7 @@ export function useProfile() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return {
     getUserProfile,

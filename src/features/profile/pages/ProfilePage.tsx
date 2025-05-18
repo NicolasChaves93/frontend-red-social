@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { useProfile } from "../hooks/useProfile";
@@ -18,37 +18,55 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        let profileData;
-        
-        if (id) {
-          // Ver perfil de otro usuario
-          profileData = await getUserProfile(id);
-          setIsOwnProfile(currentUser?.id === id);
-        } else {
-          // Ver perfil propio
-          profileData = await getUserProfile();
-          setIsOwnProfile(true);
-        }
-        
-        setUser(profileData);
-      } catch (error: any) {
-        showToast(error.message || "Error al cargar el perfil", "error");
+  // Usar useCallback para evitar recreaciones innecesarias
+  const fetchProfile = useCallback(async () => {
+    if (!isInitialLoad) return;
+    
+    try {
+      let profileData;
+      
+      if (id) {
+        // Ver perfil de otro usuario
+        profileData = await getUserProfile(id);
+        setIsOwnProfile(currentUser?.id === id);
+      } else {
+        // Ver perfil propio
+        profileData = await getUserProfile();
+        setIsOwnProfile(true);
       }
-    };
+      
+      setUser(profileData);
+    } catch (error: any) {
+      showToast(error.message || "Error al cargar el perfil", "error");
+    } finally {
+      setIsInitialLoad(false);
+    }
+  }, [id, currentUser, getUserProfile, showToast, isInitialLoad]);
 
+  // Usar solo una vez al cargar el componente
+  useEffect(() => {
     fetchProfile();
-  }, [id, currentUser, getUserProfile, showToast]);
+  }, [fetchProfile]);
 
   const handleUpdateProfile = async (updatedData: Partial<User>) => {
     if (!isOwnProfile) return;
     
     try {
       const updatedProfile = await updateUserProfile(updatedData);
-      setUser(updatedProfile);
+      
+      // Conservar las publicaciones del usuario al actualizar el perfil
+      setUser(prevUser => {
+        if (!prevUser) return updatedProfile;
+        
+        return {
+          ...updatedProfile,
+          // Mantener las publicaciones que teníamos antes si no vienen en la respuesta
+          posts: updatedProfile.posts || prevUser.posts
+        };
+      });
+      
       setIsEditing(false);
       showToast("Perfil actualizado exitosamente", "success");
     } catch (error: any) {
@@ -56,11 +74,11 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading && !user) {
+  if (loading && isInitialLoad) {
     return <Spinner />;
   }
 
-  if (!user) {
+  if (!user && !isInitialLoad) {
     return (
       <div className="w-full max-w-md mx-auto text-center p-8">
         <h1 className="text-2xl font-bold mb-4">Perfil no encontrado</h1>
@@ -71,20 +89,20 @@ export default function ProfilePage() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {!isEditing ? (
+      {user && !isEditing ? (
         <UserProfileCard 
           user={user} 
           isOwnProfile={isOwnProfile}
           onEditClick={() => setIsEditing(true)} 
         />
-      ) : (
+      ) : user && isEditing ? (
         <EditProfileForm
           user={user}
           onSubmit={handleUpdateProfile}
           onCancel={() => setIsEditing(false)}
           isLoading={loading}
         />
-      )}
+      ) : null}
       
       {/* Mostrar las publicaciones del usuario si existen */}
       {user && user.posts && user.posts.length > 0 && (
