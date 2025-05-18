@@ -21,9 +21,9 @@ export function useAuth() {
       setAuth(response.data.token, response.data.user);
       return response.data;
     } catch (err: any) {
-      const message = err.response?.data?.message || "Error al iniciar sesión";
-      setError(message);
-      throw new Error(message);
+
+      setError(err);
+      throw err;
     } finally {
       setLoading(false);
     }

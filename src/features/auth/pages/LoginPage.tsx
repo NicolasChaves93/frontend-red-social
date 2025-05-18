@@ -13,8 +13,10 @@ export default function LoginPage() {
   const location = useLocation();
   const { showToast } = useToast();
   
-  // Obtener la ruta a la que se intentaba acceder antes de login
   const from = (location.state as any)?.from?.pathname || "/posts";
+
+  // Añadir estado para mensajes de error del formulario
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +26,16 @@ export default function LoginPage() {
       showToast("Inicio de sesión exitoso", "success");
       navigate(from, { replace: true });
     } catch (error: any) {
-      showToast(error.message || "Error al iniciar sesión", "error");
+      // Capturar específicamente errores 401 y mostrar mensaje del servidor
+      if (error.response?.status === 401) {
+        const errorMessage = error.response.data?.message || "Email o contraseña inválidos";
+        showToast(errorMessage, "error");
+      } else {
+        showToast(error.message || "Error al iniciar sesión", "error");
+      }
+      
+      // Mostrar mensaje de error debajo del formulario también para mejor visibilidad
+      setFormError(error.response?.data?.message || error.message || "Error al iniciar sesión");
     }
   };
 
@@ -34,6 +45,13 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Iniciar sesión
         </h1>
+        
+        {/* Mostrar mensaje de error si existe */}
+        {formError && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md text-sm">
+            {formError}
+          </div>
+        )}
         
         <form onSubmit={handleSubmit}>
           <Input

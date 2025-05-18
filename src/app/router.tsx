@@ -4,7 +4,6 @@ import AppLayout from "./layout/AppLayout";
 import PrivateRoute from "../shared/components/PrivateRoute";
 import Spinner from "../shared/components/Spinner";
 
-// Lazy load de páginas
 const LoginPage = lazy(() => import("../features/auth/pages/LoginPage"));
 const RegisterPage = lazy(() => import("../features/auth/pages/RegisterPage"));
 const PostsPage = lazy(() => import("../features/posts/pages/PostsPage"));
