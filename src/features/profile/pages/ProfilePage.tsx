@@ -6,6 +6,7 @@ import { useToast } from "../../../shared/hooks/useToast";
 import Spinner from "../../../shared/components/Spinner";
 import UserProfileCard from "../components/UserProfileCard";
 import EditProfileForm from "../components/EditProfileForm";
+import PostCard from "../../posts/components/PostCard";
 import type { User } from "../../../shared/types";
 
 export default function ProfilePage() {
@@ -83,6 +84,28 @@ export default function ProfilePage() {
           onCancel={() => setIsEditing(false)}
           isLoading={loading}
         />
+      )}
+      
+      {/* Mostrar las publicaciones del usuario si existen */}
+      {user && user.posts && user.posts.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Publicaciones</h2>
+          <div>
+            {user.posts.map(post => (
+              <PostCard 
+                key={post.id} 
+                post={{
+                  ...post,
+                  author: {
+                    id: user.id,
+                    username: user.username,
+                    profilePicture: user.profilePicture
+                  }
+                }} 
+              />
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

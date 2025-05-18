@@ -1,9 +1,11 @@
 export interface User {
   id: string;
-  name: string;
-  email: string;
-  bio?: string;
-  profileImage?: string;
+  username: string;
+  fullName: string | null;
+  bio: string | null;
+  profilePicture: string | null;
+  createdAt: string;
+  posts?: Post[];
 }
 
 export interface Post {

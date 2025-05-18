@@ -2,6 +2,11 @@ import { useState } from "react";
 import api from "../../../shared/utils/api";
 import type { User } from "../../../shared/types";
 
+interface ProfileResponse {
+  success: boolean;
+  data: User;
+}
+
 export function useProfile() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -12,12 +17,19 @@ export function useProfile() {
     
     try {
       const url = userId ? `/users/${userId}` : "/users/profile";
-      const response = await api.get<User>(url);
-      return response.data;
+      const response = await api.get<ProfileResponse>(url);
+      
+      // Verificar la estructura de la respuesta
+      if (response.data && response.data.success && response.data.data) {
+        return response.data.data;
+      } else {
+        throw new Error("Formato de respuesta inesperado");
+      }
     } catch (err: any) {
+      console.error("Error al obtener perfil:", err);
       const message = err.response?.data?.message || "Error al obtener el perfil";
       setError(message);
-      throw new Error(message);
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -28,13 +40,18 @@ export function useProfile() {
     setError(null);
     
     try {
-      // Si hay una imagen, requeriría lógica especial para subir archivos
-      const response = await api.put<User>("/users/profile", data);
-      return response.data;
+      const response = await api.put<ProfileResponse>("/users/profile", data);
+      
+      if (response.data && response.data.success && response.data.data) {
+        return response.data.data;
+      } else {
+        throw new Error("Formato de respuesta inesperado");
+      }
     } catch (err: any) {
+      console.error("Error al actualizar perfil:", err);
       const message = err.response?.data?.message || "Error al actualizar el perfil";
       setError(message);
-      throw new Error(message);
+      throw err;
     } finally {
       setLoading(false);
     }

@@ -18,15 +18,15 @@ export default function UserProfileCard({ user, isOwnProfile, onEditClick }: Use
         {/* Avatar */}
         <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
           <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-gray-200">
-            {user.profileImage ? (
+            {user.profilePicture ? (
               <img 
-                src={user.profileImage} 
-                alt={user.name} 
+                src={user.profilePicture} 
+                alt={user.username} 
                 className="w-full h-full object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white text-4xl font-semibold">
-                {user.name.charAt(0).toUpperCase()}
+                {user.username.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
@@ -34,8 +34,10 @@ export default function UserProfileCard({ user, isOwnProfile, onEditClick }: Use
         
         {/* User info */}
         <div className="mt-16 text-center mb-4">
-          <h1 className="text-2xl font-bold text-gray-800">{user.name}</h1>
-          <p className="text-gray-500">{user.email}</p>
+          <h1 className="text-2xl font-bold text-gray-800">
+            {user.fullName || user.username}
+          </h1>
+          <p className="text-gray-500">@{user.username}</p>
           
           {user.bio && (
             <div className="mt-4 text-gray-700">

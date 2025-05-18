@@ -16,10 +16,11 @@ export default function EditProfileForm({
   onCancel,
   isLoading 
 }: EditProfileFormProps) {
-  const [name, setName] = useState(user.name);
+  const [username, setUsername] = useState(user.username);
+  const [fullName, setFullName] = useState(user.fullName || "");
   const [bio, setBio] = useState(user.bio || "");
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(user.profileImage || null);
+  const [imagePreview, setImagePreview] = useState<string | null>(user.profilePicture || null);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,8 +40,8 @@ export default function EditProfileForm({
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
     
-    if (!name.trim()) {
-      newErrors.name = "El nombre es requerido";
+    if (!username.trim()) {
+      newErrors.username = "El nombre de usuario es requerido";
     }
     
     setErrors(newErrors);
@@ -53,13 +54,14 @@ export default function EditProfileForm({
     if (!validateForm()) return;
     
     const updatedData: Partial<User> = {
-      name,
-      bio: bio.trim() ? bio : undefined,
+      username,
+      fullName: fullName.trim() ? fullName : null,
+      bio: bio.trim() ? bio : null,
     };
     
     if (profileImage) {
       // En una implementación real, aquí se manejaría la subida de la imagen
-      // y se asignaría la URL resultante a updatedData.profileImage
+      // y se asignaría la URL resultante a updatedData.profilePicture
     }
     
     onSubmit(updatedData);
@@ -81,7 +83,7 @@ export default function EditProfileForm({
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white text-4xl font-semibold">
-                {name.charAt(0).toUpperCase()}
+                {username.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
@@ -102,12 +104,20 @@ export default function EditProfileForm({
         </div>
         
         <Input
-          label="Nombre"
+          label="Nombre de usuario"
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          error={errors.name}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          error={errors.username}
           required
+        />
+        
+        <Input
+          label="Nombre completo"
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Tu nombre completo"
         />
         
         <div className="mb-4">
