@@ -56,6 +56,32 @@ yarn dev
 
 4. Abre tu navegador en `http://localhost:5173`
 
+## Despliegue con Docker
+
+### Construir la imagen
+
+```bash
+docker build -t frontend-red-social .
+```
+
+### Ejecutar el contenedor
+
+```bash
+docker run -p 80:80 frontend-red-social
+```
+
+### Usando Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+Para detener los contenedores:
+
+```bash
+docker-compose down
+```
+
 ## Estructura del proyecto
 
 ```

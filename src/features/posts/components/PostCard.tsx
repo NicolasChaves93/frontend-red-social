@@ -32,7 +32,6 @@ export default function PostCard({ post }: PostCardProps) {
 
   // Extraer valores con valores por defecto para evitar errores
   const { 
-    id = "", 
     content = "", 
     imageUrl = null, 
     likesCount = 0, 
