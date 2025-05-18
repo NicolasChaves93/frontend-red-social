@@ -17,10 +17,12 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
       setAuth: (token, user) => {
+        // Guardar el token en localStorage para que persista entre recargas
         localStorage.setItem("token", token);
         set({ token, user, isAuthenticated: true });
       },
       clearAuth: () => {
+        // Eliminar el token al cerrar sesión
         localStorage.removeItem("token");
         set({ token: null, user: null, isAuthenticated: false });
       },

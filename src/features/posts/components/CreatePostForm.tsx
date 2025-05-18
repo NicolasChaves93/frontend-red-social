@@ -3,7 +3,11 @@ import { usePosts } from "../hooks/usePosts";
 import Button from "../../../shared/components/Button";
 import { useToast } from "../../../shared/hooks/useToast";
 
-export default function CreatePostForm() {
+interface CreatePostFormProps {
+  onPostCreated?: () => void;
+}
+
+export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
   const [content, setContent] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -45,6 +49,11 @@ export default function CreatePostForm() {
       setContent("");
       removeImage();
       showToast("¡Publicación creada con éxito!", "success");
+      
+      // Invocar callback para recargar posts
+      if (onPostCreated) {
+        onPostCreated();
+      }
     } catch (error) {
       showToast("Error al crear la publicación", "error");
     }
